@@ -57,15 +57,14 @@ def vulnerabilidades():
         vulnerabilidades2 = []
         print("Error al obtener vulnerabilidades:", e)
 
-    return render_template("vulnerabilidades.html", vulnerabilidades=vulnerabilidades)
+    return render_template("vulnerabilidades.html", vulnerabilidades=vulnerabilidades2)
 
 
 
 
 
 
-
-
+#practica1
 
 @app.route('/ej1')
 def ej1():
