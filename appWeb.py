@@ -32,12 +32,10 @@ def validar_usuario(nombre, contrasena):
     conn.close()
     return usuario is not None
 
-# Redirige al login al entrar por primera vez
 @app.route('/')
 def index():
     return redirect(url_for('login'))
 
-# Login simple sin sesiones
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
