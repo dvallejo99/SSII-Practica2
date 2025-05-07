@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask import send_file
+from flask import Flask, render_template, request, redirect, url_for,send_file
+import pandas as pd
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
 from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-import io
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+import matplotlib.pyplot as plt
 import os
 import sqlite3
 import requests
@@ -10,6 +12,7 @@ import ejercicio2
 import ejercicio3
 import ejercicio4
 from queries import get_top_clientes, get_top_tipos, get_top_empleados
+
 
 app = Flask(__name__)
 
@@ -93,41 +96,78 @@ def vulnerabilidades():
 
     return render_template("vulnerabilidades.html", vulnerabilidades=cvul)
 
+
 @app.route('/generar_informe')
 def generar_informe():
-    buffer = io.BytesIO()
-    c = canvas.Canvas(buffer, pagesize=A4)
-    width, height = A4
+    # Crear carpeta de gráficos si no existe
+    if not os.path.exists("graficos"):
+        os.makedirs("graficos")
 
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(100, height - 50, "Informe de Análisis de Incidentes")
+    # Conexión y lectura
+    conn = sqlite3.connect("incidencias.db")
+    clientes_df = pd.read_sql_query("SELECT * FROM clientes", conn)
+    empleados_df = pd.read_sql_query("SELECT * FROM empleados", conn)
+    tipos_df = pd.read_sql_query("SELECT * FROM tipos_incidentes", conn)
+    tickets_df = pd.read_sql_query("SELECT * FROM tickets_emitidos", conn)
+    contactos_df = pd.read_sql_query("SELECT * FROM contactos_con_empleados", conn)
+    conn.close()
 
-    # Sección de estadísticas básicas (puedes modificarlo según lo que quieras mostrar)
-    c.setFont("Helvetica", 12)
-    y = height - 100
-    top_clientes = get_top_clientes(5)
-    c.drawString(100, y, "Top 5 Clientes con más incidencias:")
-    y -= 20
-    for cliente, cantidad in top_clientes:
-        c.drawString(120, y, f"{cliente}: {cantidad} incidencias")
-        y -= 20
+    # Generar gráficos
+    incidencias_count = tickets_df["tipo_incidencia"].value_counts().reset_index()
+    incidencias_count.columns = ["tipo", "cantidad"]
+    plt.figure(figsize=(6, 4))
+    plt.bar(incidencias_count["tipo"], incidencias_count["cantidad"])
+    plt.tight_layout()
+    plt.savefig("graficos/incidencias_tipo.png")
+    plt.close()
 
-    y -= 20
-    top_empleados = get_top_empleados(5)
-    c.drawString(100, y, "Top 5 Empleados con más tiempo invertido:")
-    y -= 20
-    for empleado, tiempo in top_empleados:
-        c.drawString(120, y, f"{empleado}: {tiempo:.2f} horas")
-        y -= 20
+    plt.figure(figsize=(6, 4))
+    tickets_df["satisfaccion_cliente"].hist(bins=5)
+    plt.tight_layout()
+    plt.savefig("graficos/satisfaccion.png")
+    plt.close()
 
-    c.showPage()
-    c.save()
+    tiempo_por_empleado = contactos_df.groupby("id_emp")["tiempo"].sum().reset_index()
+    tiempo_por_empleado = pd.merge(tiempo_por_empleado, empleados_df, on="id_emp")
+    plt.figure(figsize=(6, 4))
+    plt.bar(tiempo_por_empleado["nombre"], tiempo_por_empleado["tiempo"])
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig("graficos/tiempo_empleados.png")
+    plt.close()
 
-    buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name="informe.pdf", mimetype='application/pdf')
+    # Generar PDF
+    doc = SimpleDocTemplate("static/informe_completo.pdf", pagesize=A4)
+    styles = getSampleStyleSheet()
+    story = [Paragraph("Informe de Actividad - Empresa de Ciberseguridad", styles["Title"]),
+             Spacer(1, 12)]
 
+    # Clientes
+    story.append(Paragraph("Clientes", styles["Heading2"]))
+    tabla_clientes = [clientes_df.columns.tolist()] + clientes_df.values.tolist()
+    t = Table(tabla_clientes)
+    t.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), colors.gray),
+                           ("GRID", (0, 0), (-1, -1), 0.5, colors.black)]))
+    story.append(t)
+    story.append(Spacer(1, 12))
 
+    # Gráficos
+    story.append(Paragraph("Incidencias por Tipo", styles["Heading2"]))
+    story.append(Image("graficos/incidencias_tipo.png", width=400, height=300))
+    story.append(Spacer(1, 12))
 
+    story.append(Paragraph("Satisfacción de Clientes", styles["Heading2"]))
+    story.append(Image("graficos/satisfaccion.png", width=400, height=300))
+    story.append(Spacer(1, 12))
+
+    story.append(Paragraph("Tiempo por Empleado", styles["Heading2"]))
+    story.append(Image("graficos/tiempo_empleados.png", width=400, height=300))
+
+    # Guardar
+    doc.build(story)
+
+    # Descargar
+    return send_file("static/informe_completo.pdf", as_attachment=True)
 
 #practica1
 
