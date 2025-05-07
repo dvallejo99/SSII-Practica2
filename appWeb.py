@@ -1,4 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask import send_file
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+import io
 import os
 import sqlite3
 import requests
@@ -89,7 +93,38 @@ def vulnerabilidades():
 
     return render_template("vulnerabilidades.html", vulnerabilidades=cvul)
 
+@app.route('/generar_informe')
+def generar_informe():
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
 
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(100, height - 50, "Informe de Análisis de Incidentes")
+
+    # Sección de estadísticas básicas (puedes modificarlo según lo que quieras mostrar)
+    c.setFont("Helvetica", 12)
+    y = height - 100
+    top_clientes = get_top_clientes(5)
+    c.drawString(100, y, "Top 5 Clientes con más incidencias:")
+    y -= 20
+    for cliente, cantidad in top_clientes:
+        c.drawString(120, y, f"{cliente}: {cantidad} incidencias")
+        y -= 20
+
+    y -= 20
+    top_empleados = get_top_empleados(5)
+    c.drawString(100, y, "Top 5 Empleados con más tiempo invertido:")
+    y -= 20
+    for empleado, tiempo in top_empleados:
+        c.drawString(120, y, f"{empleado}: {tiempo:.2f} horas")
+        y -= 20
+
+    c.showPage()
+    c.save()
+
+    buffer.seek(0)
+    return send_file(buffer, as_attachment=True, download_name="informe.pdf", mimetype='application/pdf')
 
 
 
