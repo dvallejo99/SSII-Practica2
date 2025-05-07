@@ -44,7 +44,7 @@ def vulnerabilidades():
         response = requests.get("https://cve.circl.lu/api/last", timeout=10)
         response.raise_for_status()
         datos = response.json()[:10]  # Solo los últimos 10
-        vulnerabilidades = [
+        vulnerabilidades2 = [
             {
                 "id": v.get("id"),
                 "summary": v.get("summary"),
@@ -54,10 +54,18 @@ def vulnerabilidades():
             for v in datos
         ]
     except Exception as e:
-        vulnerabilidades = []
+        vulnerabilidades2 = []
         print("Error al obtener vulnerabilidades:", e)
 
     return render_template("vulnerabilidades.html", vulnerabilidades=vulnerabilidades)
+
+
+
+
+
+
+
+
 
 @app.route('/ej1')
 def ej1():
