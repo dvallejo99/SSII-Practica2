@@ -1,9 +1,10 @@
-from flask import Flask, render_template
+
 import os
 import ejercicio2
 import ejercicio3
 import ejercicio4
-
+from flask import Flask, render_template, request
+from queries import get_top_clientes, get_top_tipos, get_top_empleados
 app = Flask(__name__)
 
 db_path = "incidencias.db"
@@ -13,6 +14,26 @@ os.makedirs(image_folder, exist_ok=True)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/dashboard')
+def dashboard():
+    x = request.args.get('x', default=5, type=int)
+    modo = request.args.get('modo', default='clientes')
+
+    if modo == 'clientes':
+        resultados = get_top_clientes(x)
+        titulo = f"Top {x} clientes con más incidencias"
+    elif modo == 'tipos':
+        resultados = get_top_tipos(x)
+        titulo = f"Top {x} tipos de incidencia con más tiempo de resolución"
+    elif modo == 'empleados':
+        resultados = get_top_empleados(x)
+        titulo = f"Top {x} empleados que más tiempo han empleado"
+    else:
+        resultados = []
+        titulo = "Sin resultados"
+
+    return render_template('dashboard.html', titulo=titulo, resultados=resultados)
 
 @app.route('/ej1')
 def ej1():
