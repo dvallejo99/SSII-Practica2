@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Últimas Vulnerabilidades</title>
+</head>
+<body>
+    <h1>Últimas 10 vulnerabilidades (tiempo real)</h1>
+    <a href="/">Volver al Dashboard</a>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Resumen</th>
+            <th>CVSS</th>
+            <th>Fecha de publicación</th>
+        </tr>
+        {% for v in vulnerabilidades %}
+        <tr>
+            <td>{{ v.id }}</td>
+            <td>{{ v.summary }}</td>
+            <td>{{ v.cvss }}</td>
+            <td>{{ v.published }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
