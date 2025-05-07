@@ -46,13 +46,14 @@ def vulnerabilidades():
         datos = response.json()[:10]  # Solo los últimos 10
         cvul = [
             {
-                "id": v.get("id"),
-                "summary": v.get("summary"),
-                "cvss": v.get("cvss"),
-                "published": v.get("Published")
+                "id": v.get("id") or "Sin ID",
+                "summary": v.get("summary") or "No disponible",
+                "cvss": v.get("cvss") if v.get("cvss") is not None else "N/A",
+                "published": v.get("Published") or "Sin fecha"
             }
             for v in datos
         ]
+
     except Exception as e:
         cvul = []
         print("Error al obtener vulnerabilidades:", e)
