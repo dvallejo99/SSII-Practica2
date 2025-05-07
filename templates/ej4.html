@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 4</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/basic.css') }}">
+
+</head>
+<body>
+    <h1>Resultados del Ejercicio 4</h1>
+    <h2>Media de tiempo de resolución por tipo de mantenimiento:</h2>
+    <img src="{{ url_for('static', filename='images/media_tiempo_mantenimiento.png') }}" alt="Media de tiempo de resolución">
+    <h2>Boxplot de tiempos de resolución por tipo de incidente:</h2>
+    <img src="{{ url_for('static', filename='images/boxplot_tiempos_resolucion.png') }}" alt="Boxplot de tiempos de resolución">
+    <h2>Top 5 clientes más críticos:</h2>
+    <img src="{{ url_for('static', filename='images/top_clientes_criticos.png') }}" alt="Top 5 clientes críticos">
+    <h2>Número total de actuaciones por empleado:</h2>
+    <img src="{{ url_for('static', filename='images/actuaciones_por_empleado.png') }}" alt="Actuaciones por empleado">
+    <h2>Total de actuaciones por día de la semana:</h2>
+    <img src="{{ url_for('static', filename='images/actuaciones_por_dia_semana.png') }}" alt="Actuaciones por día de la semana">
+    <a href="/">Volver al inicio</a>
+</body>
+</html>

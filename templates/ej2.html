@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 2</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/basic.css') }}">
+
+</head>
+<body>
+    <h1>Resultados del Ejercicio 2</h1>
+    <h2>Número total de muestras: </h2>
+       <p> {{ num_muestras }}</p>
+    <h2>Media de incidentes con satisfacción >= 5: </h2>
+       <p> {{ media_satisfechos }}, Desviación estándar: {{ desv_satisfechos }}</p>
+    <h2>Media de incidentes por cliente: </h2>
+       <p> {{ media_incidentes_cliente }}, Desviación estándar: {{ desv_incidentes_cliente }}</p>
+    <h2>Media de horas por incidente: </h2>
+       <p> {{ media_horas_incidente }}, Desviación estándar: {{ desv_horas_incidente }}</p>
+    <h2>Horas mínimas en incidentes: </h2>
+       <p> {{ min_horas }}, Máximas: {{ max_horas }}</p>
+    <h2>Tiempo mínimo de resolución: </h2>
+       <p> {{ min_tiempo_resolucion }}, Máximo: {{ max_tiempo_resolucion }}</p>
+    <h2>Mínimo de incidentes por empleado: </h2>
+        <p>{{ min_incidentes_empleado }}, Máximo: {{ max_incidentes_empleado }}</p>
+    <a href="/">Volver al inicio</a>
+</body>
+</html>

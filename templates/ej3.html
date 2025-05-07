@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/basic.css') }}">
+</head>
+<body>
+    <h1>Resultados del Ejercicio 3</h1>
+
+    <h2>Número de incidentes por empleado:</h2>
+    <ul>
+        {% for empleado, cantidad in resultados["Número de incidentes por empleado"].items() %}
+            <li>Empleado {{ empleado }}: {{ cantidad }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Número de incidentes por cliente:</h2>
+    <ul>
+        {% for cliente, cantidad in resultados["Número de incidentes por cliente"].items() %}
+            <li>Cliente {{ cliente }}: {{ cantidad }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Número de incidentes por día de la semana:</h2>
+    <ul>
+        {% for dia, cantidad in resultados["Número de incidentes por día de la semana"].items() %}
+            <li>{{ dia }}: {{ cantidad }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Número de actuaciones por empleado:</h2>
+    <ul>
+        {% for empleado, cantidad in resultados["Número de actuaciones por empleado"].items() %}
+            <li>Empleado {{ empleado }}: {{ cantidad }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Análisis estadístico del tiempo de contacto:</h2>
+    <ul>
+        {% for estadistica, valor in resultados["Análisis estadístico del tiempo de contacto"].items() %}
+            <li>{{ estadistica }}: {{ valor }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Volver al inicio</a>
+</body>
+</html>

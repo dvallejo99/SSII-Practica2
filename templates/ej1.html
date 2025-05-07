@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 1 - Diagramas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/basic.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Diagramas del Ejercicio 1</h1>
+        
+        <!-- Diagrama BPMN -->
+        <h2>Diagrama BPMN</h2>
+        <img src="{{ url_for('static', filename='images/BPMN_pr1.png') }}" alt="Diagrama BPMN" style="width: 100%; max-width: 800px; height: auto;">
+        
+        <!-- Diagrama UML -->
+        <h2>Diagrama UML</h2>
+        <img src="{{ url_for('static', filename='images/UML-def.png') }}" alt="Diagrama UML" style="width: 100%; max-width: 800px; height: auto;">
+        
+        <!-- Enlace para volver al inicio -->
+        <a href="/">Volver al inicio</a>
+    </div>
+</body>
+</html>
