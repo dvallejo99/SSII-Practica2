@@ -1,21 +1,50 @@
-
+from flask import Flask, render_template, request, redirect, url_for
 import os
-
+import sqlite3
 import requests
-
 import ejercicio2
 import ejercicio3
 import ejercicio4
-from flask import Flask, render_template, request
 from queries import get_top_clientes, get_top_tipos, get_top_empleados
+
 app = Flask(__name__)
 
 db_path = "incidencias.db"
 image_folder = "static/images"
 os.makedirs(image_folder, exist_ok=True)
 
+# Función para validar usuario
+def validar_usuario(nombre, contrasena):
+    if nombre == 'admin' and contrasena == 'admin':
+        return True
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM empleados WHERE nombre = ? AND id_emp = ?", (nombre, contrasena))
+    usuario = cursor.fetchone()
+    conn.close()
+    return usuario is not None
+
+# Redirige al login al entrar por primera vez
 @app.route('/')
 def index():
+    return redirect(url_for('login'))
+
+# Login simple sin sesiones
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        nombre = request.form['username']
+        contrasena = request.form['password']
+        if validar_usuario(nombre, contrasena):
+            return redirect(url_for('inicio'))
+        else:
+            return render_template('login.html', error="Credenciales incorrectas")
+    return render_template('login.html')
+
+# Página principal después de hacer login
+@app.route('/inicio')
+def inicio():
     return render_template('index.html')
 
 @app.route('/dashboard')
