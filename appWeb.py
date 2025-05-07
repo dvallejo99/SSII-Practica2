@@ -1,5 +1,8 @@
 
 import os
+
+import requests
+
 import ejercicio2
 import ejercicio3
 import ejercicio4
@@ -34,6 +37,27 @@ def dashboard():
         titulo = "Sin resultados"
 
     return render_template('dashboard.html', titulo=titulo, resultados=resultados)
+
+@app.route('/vulnerabilidades')
+def vulnerabilidades():
+    try:
+        response = requests.get("https://cve.circl.lu/api/last", timeout=10)
+        response.raise_for_status()
+        datos = response.json()[:10]  # Solo los últimos 10
+        vulnerabilidades = [
+            {
+                "id": v.get("id"),
+                "summary": v.get("summary"),
+                "cvss": v.get("cvss"),
+                "published": v.get("Published")
+            }
+            for v in datos
+        ]
+    except Exception as e:
+        vulnerabilidades = []
+        print("Error al obtener vulnerabilidades:", e)
+
+    return render_template("vulnerabilidades.html", vulnerabilidades=vulnerabilidades)
 
 @app.route('/ej1')
 def ej1():

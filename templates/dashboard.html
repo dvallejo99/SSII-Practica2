@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>CMI - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/basic.css') }}">
 </head>
 <body>
     <h1>{{ titulo }}</h1>
@@ -18,7 +19,6 @@
         </select>
         <button type="submit">Actualizar</button>
     </form>
-    <p><a href="/vulnerabilidades">Ver últimas 10 vulnerabilidades CVE</a></p>
 
 
     <table border="1">
@@ -30,5 +30,7 @@
         </tr>
         {% endfor %}
     </table>
+
+    <a href="/">Volver</a>
 </body>
 </html>
