@@ -132,6 +132,7 @@ for model in modelos:
     model.fit(X_train, y_train)
     try:
         print(f'Coeficientes: {model.coef_}')
+        print(f'Sesgo: {model.intercept_}')
     except AttributeError:
         print(f'Importancia de variables: {model.feature_importances_}')
     y_pred = model.predict(X_test)
