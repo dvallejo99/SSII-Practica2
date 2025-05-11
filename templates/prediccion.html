@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Predicci&oacute;n de Criticidad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/basic.css') }}">
+
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 40px;
+        }
+        form {
+          max-width: 600px;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+        }
+        label {
+          display: block;
+          margin-top: 15px;
+        }
+        input, select {
+          width: 100%;
+          padding: 8px;
+          margin-top: 5px;
+        }
+        button {
+          margin-top: 20px;
+          padding: 10px 15px;
+          font-size: 16px;
+          cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Predicción de Criticidad</h1>
+    <p>Se deben rellenar los datos del nuevo ticket y seleccionar el modelo de inteligencia artificial que determinará si es crítico o no.</p>
+    <div style="display: flex; gap: 40px;">
+        <form action="/predecir" method="POST">
+        <label for="cliente">ID del Cliente:</label>
+        <select id="cliente" name="cliente">
+            {% for client in clientes %}
+                <option value="{{ client.id_cli }}">{{ client.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="fecha_apertura">Fecha de Apertura:</label>
+        <input type="date" id="fecha_apertura" name="fecha_apertura" required>
+
+        <label for="fecha_cierre">Fecha de Cierre:</label>
+        <input type="date" id="fecha_cierre" name="fecha_cierre" required>
+
+        <label for="es_mantenimiento">¿Es mantenimiento?</label>
+        <select id="es_mantenimiento" name="es_mantenimiento">
+          <option value="0">No</option>
+          <option value="1">Sí</option>
+        </select>
+
+        <label for="tipo_incidencia">Tipo de Incidencia:</label>
+        <select id="tipo_incidencia" name="tipo_incidencia">
+            {% for tipo in tipos_incidentes %}
+                <option value="{{ tipo.id_inci }}">{{ tipo.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="modelo">Selecciona el Modelo Clasificador:</label>
+        <select id="modelo" name="modelo">
+          <option value="lineal">Modelo Lineal</option>
+          <option value="arbol">Árbol de Decisión</option>
+          <option value="bosque">Bosque Aleatorio</option>
+        </select>
+
+        <button type="submit">Predecir</button>
+    </form>
+
+    {% if resultado %}
+        <div style="flex: 1; border: 1px solid #ccc; padding: 20px; background-color: #f9f9f9; height: fit-content;">
+          <div style="margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #f5f5f5;">
+            <strong>Datos del ticket:</strong>
+              <p>Cliente: {{ clientes[ticket.cliente-1].nombre }}</p>
+              <p>Duración del ticket: {{ticket.duracion_ticket}} días</p>
+              <p>Mantenimiento: {{ticket.es_mantenimiento}}</p>
+              <p>Incidente: {{ tipos_incidentes[ticket.tipo_incidencia].nombre }}</p>
+          </div>
+
+          <div style="margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #f5f5f5;">
+            <strong>{{ resultado }}</strong>
+          </div>
+        </div>
+    {% endif %}
+
+    {% if fallo %}
+        {{ fallo }}
+    {% endif %}
+    </div>
+
+    <a href="/inicio">Volver</a>
+</body>
+</html>
