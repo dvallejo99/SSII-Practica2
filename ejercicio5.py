@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from sklearn import linear_model
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_squared_error
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 
 
 def fromTickets_to_Df(tickets):
@@ -79,6 +79,32 @@ def graficar(ejeX, y_test, modelos, predicciones):
     plt.tight_layout(rect=(0, 0, 1, 0.96), pad=2)
     plt.show()
 
+    # Gráfica 2: Coeficientes del modelo lineal
+    features = X.columns
+    coef = modelos[0].coef_[0]
+    plt.figure(figsize=(10, 6))
+    plt.barh(features, coef)
+    plt.xlabel('Coeficiente')
+    plt.title('Coeficientes del Modelo de Regresión Logística')
+    plt.grid(True)
+    plt.show()
+
+    # Gráfica 3: Árbol de Decisión
+    plt.figure(figsize=(14, 8))
+    plot_tree(modelos[1], feature_names=X.columns, class_names=['No Crítico', 'Crítico'], filled=True)
+    plt.title('Estructura del Árbol de Decisión')
+    plt.show()
+
+    # Gráfica 4: Importancia de variables en Random Forest
+    importancias = modelos[2].feature_importances_
+    plt.figure(figsize=(10, 6))
+    plt.barh(features, importancias)
+    plt.xlabel('Importancia')
+    plt.title('Importancia de Variables - Random Forest')
+    plt.grid(True)
+    plt.show()
+
+
 ## PREPROCESAMIENTO DE DATOS ##
 path = 'datos/data_clasified.json'
 with open(path, 'r') as f:
@@ -115,5 +141,5 @@ for model in modelos:
 # Graficamos
 # Definimos eje X: Número de ticket emitido
 ejeX = range(corte, len(X))
-#graficar(ejeX, y_test, modelos, predicciones)
+graficar(ejeX, y_test, modelos, predicciones)
 
